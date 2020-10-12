@@ -1,0 +1,192 @@
+.clickable {
+    cursor: pointer;
+}
+
+.red-icon {
+    color: red;
+}
+
+.green-icon {
+    color: green;
+}
+
+.yellow-icon {
+    color: orange;
+}
+
+.highlighter-green {
+    background: #42A948;
+    /* green */
+}
+
+.search {
+    background-color: #42A948;
+}
+
+mat-expansion-panel-header {
+    background-color: #3598dc !important;
+}
+
+.picker1 {
+    margin-left: 20px;
+}
+
+table {
+    width: 100%;
+}
+
+.time-field {
+    color: grey;
+    position: relative;
+}
+
+.checkin {
+    margin: -6px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.time-input {
+    text-align: right;
+    border: 0;
+    color: grey;
+}
+
+.mat-cell {
+    text-align: center;
+}
+
+mat-icon {
+    font-family: 'Material Icons' !important;
+}
+
+button {
+    background: #3598dc;
+    color: #fff;
+}
+
+
+/*Datatables*/
+
+table.dataTable th,
+table.dataTable td {
+    box-sizing: border-box;
+    font-size: 14px;
+}
+
+table.dataTable td:first-child,
+table.dataTable th:first-child {
+    padding-left: 24px !important;
+}
+
+
+/*cvs btn*/
+
+.dt-button.buttons-csv {
+    background: transparent;
+    border: 1px solid grey;
+    padding: 5px 26px;
+    border-radius: 5px;
+}
+
+.mat-expansion-indicator::after {
+    color: #fff;
+}
+
+.cell {
+    position: relative;
+    display: table-cell;
+    opacity: 1;
+}
+
+.tooltip .tooltiptext {
+    visibility: hidden;
+    width: 120px;
+    background-color: #555;
+    color: #fff;
+    text-align: center;
+    padding: 5px 0;
+    border-radius: 6px;
+    /* Position the tooltip text */
+    position: absolute;
+    z-index: 1;
+    bottom: 125%;
+    left: 50%;
+    margin-left: -60px;
+    /* Fade in tooltip */
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+
+/* Tooltip arrow */
+
+.tooltip .tooltiptext::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: #555 transparent transparent transparent;
+}
+
+
+/* Show the tooltip text when you mouse over the tooltip container */
+
+.tooltip:hover .tooltiptext {
+    visibility: visible;
+    opacity: 1;
+}
+
+table.dataTable th.dt-center,
+table.dataTable td.dt-center,
+table.dataTable td.dataTables_empty {
+    display: none!important;
+}
+
+ ::ng-deep .custom-tooltip {
+    font-size: 15px;
+}
+
+.search-from {
+    padding-top: 1em !important;
+}
+
+.search-from mat-form-field {
+    margin: 15px !important;
+}
+
+.search-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-right: 15px;
+    margin-bottom: 15px;
+}
+
+.wrapper {
+    margin: 24px;
+}
+
+
+/* .initial_time {
+    position: absolute;
+    text-align: right;
+} */
+
+.form-field {
+    margin-right: 10px;
+    margin-right: 10px;
+    margin-bottom: 0 !important;
+    align-self: baseline;
+    flex: 1 0 21%;
+    max-width: 22%;
+}
+
+mat-toolbar {
+    display: flex;
+    justify-content: flex-end;
+    margin-right: 15px;
+}

@@ -1,0 +1,121 @@
+<mat-toolbar>
+    <button mat-icon-button (click)="refresh()">
+        <mat-icon>refresh</mat-icon>
+    </button>
+</mat-toolbar>
+<div class="mat-elevation-z2 wrapper">
+
+    <mat-spinner></mat-spinner>
+    <ng-container>
+        <form [formGroup]="LogsFormFilter" class="search-from">
+            <div fxLayout="row wrap" fxLayout.xs="column" fxLayoutGap="10px" fxLayoutAlign="left center">
+
+                <mat-form-field fxFlex="calc(30% - 10px)">
+                    <input matInput [matDatepicker]="picker" [value]="todayDate" placeholder="Start Date" formControlName="start_date">
+                    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                    <mat-datepicker #picker></mat-datepicker>
+                    <mat-error *ngIf="LogsFormFilter.controls.start_date.hasError('fromToDate')">
+                        {{'Start date can not be more than end date' | translate}}
+                    </mat-error>
+                </mat-form-field>
+
+                <mat-form-field fxFlex="calc(30% - 10px)">
+                    <div class="time-field">
+                        <mat-label class="checkin">
+                            <div>
+                                Start Time
+                            </div>
+                            <div class="initial_time">{{LogsFormFilter.value.start_time===''?'00:00' :''}}</div>
+                        </mat-label>
+                        <input matInput class="time-input" atp-time-picker formControlName="start_time" />
+                        <mat-error *ngIf="LogsFormFilter.controls.start_time.hasError('fromToTime')">
+                            {{'Start time can not be more than end time' | translate}}
+                        </mat-error>
+                    </div>
+                </mat-form-field>
+
+                <mat-form-field fxFlex="calc(30% - 10px)">
+                    <mat-select placeholder="Status" formControlName="status">
+                        <mat-option *ngFor="let option of StatusCode" [value]="option">
+                            {{ option }}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+
+                <mat-form-field fxFlex="calc(30% - 10px)">
+                    <input matInput [matDatepicker]="picker2" [value]="todayDate" placeholder=" End Date" formControlName="end_date">
+                    <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
+                    <mat-datepicker #picker2></mat-datepicker>
+                </mat-form-field>
+
+
+                <mat-form-field fxFlex="calc(30% - 10px)">
+                    <div class="time-field">
+                        <mat-label class="checkin">
+                            <div>
+                                End Time
+                            </div>
+                            <div class="initial_time">{{LogsFormFilter.value.end_time===''?'00:00' :''}}</div>
+                        </mat-label>
+                        <input matInput class="time-input" atp-time-picker formControlName="end_time" />
+                    </div>
+                </mat-form-field>
+
+                <mat-form-field fxFlex="calc(30% - 10px)">
+                    <mat-select placeholder="Description" formControlName="description">
+                        <mat-option *ngFor="let option of Description" [value]="option">
+                            {{ option }}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+            <div class="search-actions">
+                <button mat-raised-button class="search" (click)="search(LogsFormFilter.value)">Search</button>
+            </div>
+        </form>
+
+        <mat-table #table [dataSource]="dataSource">
+            <!-- Position Column -->
+            <ng-container matColumnDef="date">
+                <mat-header-cell *matHeaderCellDef> Date </mat-header-cell>
+                <mat-cell *matCellDef="let element"> {{element.date | momentDateTime : instanceDateTimeFormat}} </mat-cell>
+            </ng-container>
+
+
+            <!-- Name Column -->
+            <ng-container matColumnDef="description">
+                <mat-header-cell *matHeaderCellDef> Description </mat-header-cell>
+                <mat-cell *matCellDef="let element"> {{element.description}} </mat-cell>
+            </ng-container>
+
+            <!-- Name Column -->
+            <ng-container matColumnDef="request">
+                <mat-header-cell *matHeaderCellDef> Request </mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    <span (click)="openDialog(element.request.payload)" class="clickable">{{element.request.payload | ellipsis:25 }}</span>
+                </mat-cell>
+            </ng-container>
+
+            <!-- Name Column -->
+            <ng-container matColumnDef="response">
+                <mat-header-cell *matHeaderCellDef> Response </mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    <span *ngIf="element.response" (click)="openDialog(element.response.payload)" class="clickable">{{element.response.payload | ellipsis:25 }}</span>
+                </mat-cell>
+            </ng-container>
+
+            <!-- Name Column -->
+            <ng-container matColumnDef="status">
+                <mat-header-cell *matHeaderCellDef> Status </mat-header-cell>
+                <mat-cell *matCellDef="let element" [style.color]="element.color">
+                    <mat-icon>fiber_manual_record</mat-icon>
+                </mat-cell>
+            </ng-container>
+
+            <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+            <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+        </mat-table>
+    </ng-container>
+    <mat-paginator [length]="resultsLength" [pageSize]="20">
+    </mat-paginator>
+</div>

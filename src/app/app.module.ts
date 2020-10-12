@@ -1,8 +1,10 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
+import { CommonModule } from '@angular/common';
 
 import { AppComponent } from './app.component';
-import { ComponentsModule } from '../../projects/elements/lib/components.module';
+import { ComponentsModule } from 'projects/elements/lib/components.module';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 @NgModule({
   declarations: [
@@ -10,7 +12,9 @@ import { ComponentsModule } from '../../projects/elements/lib/components.module'
   ],
   imports: [
     BrowserModule,
-    ComponentsModule
+    CommonModule,
+    ComponentsModule,
+    BrowserAnimationsModule
   ],
   providers: [],
   bootstrap: [AppComponent]
