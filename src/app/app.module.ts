@@ -3,8 +3,8 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import { AppComponent } from './app.component';
-import { ComponentsModule } from 'projects/elements/lib/components.module';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { LogsModule } from 'projects/elements/lib/logs/ntmp-logs.module';
 
 @NgModule({
   declarations: [
@@ -13,7 +13,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
   imports: [
     BrowserModule,
     CommonModule,
-    ComponentsModule,
+    LogsModule,
     BrowserAnimationsModule
   ],
   providers: [],

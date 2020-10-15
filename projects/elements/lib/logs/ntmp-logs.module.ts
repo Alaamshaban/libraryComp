@@ -22,7 +22,7 @@ import {
 } from '@angular/material/table';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatIconModule } from '@angular/material/icon';
-import {MatToolbarModule} from '@angular/material/toolbar';
+import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { AmazingTimePickerModule } from 'amazing-time-picker';
@@ -61,7 +61,8 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     MatNativeDateModule,
     BrowserAnimationsModule
   ],
-  entryComponents: [LogBodyComponent]
+  entryComponents: [LogBodyComponent],
+  exports: [NtmpLogsComponent]
 })
 export class LogsModule {
 }

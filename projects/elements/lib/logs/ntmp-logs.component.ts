@@ -1,35 +1,16 @@
-import { Component, OnInit, AfterViewInit, AfterViewChecked, ViewChild } from '@angular/core';
+import { Component, OnInit, AfterViewInit, AfterViewChecked, ViewChild, Input, Output, EventEmitter, OnChanges } from '@angular/core';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { LogBodyComponent } from './logbody.component';
 import * as moment from 'moment-timezone';
 import { Logsfilter } from '../logs/models/logs-filter.model';
-import { NtmpLogsService } from '../logs/service/ntmp-logs.service';
-import { CookieService } from 'ngx-cookie';
 import { CustomeDateValidators } from '../logs/validators/from-to-date.validator';
 import { CustomeTimeValidators } from '../logs/validators/form-to-time.validator';
-import { Select } from '@ngxs/store';
-import { AuthState, AuthStateModel } from '../logs/store/auth.state';
-import { Observable } from 'rxjs';
 import { MomentDateAdapter } from '@angular/material-moment-adapter';
 import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTableDataSource } from '@angular/material/table';
 import { MAT_DATE_LOCALE, DateAdapter, MAT_DATE_FORMATS } from '@angular/material/core';
-
-export interface LogRecord {
-  date: string;
-  description: string;
-  request: {
-    type: string;
-    payload: string;
-  };
-  response: {
-    type: string;
-    status_code: number;
-    payload: string;
-  };
-}
+import { LogRecord } from './models/log-record.model';
 
 export const MY_FORMATS = {
   parse: { dateInput: 'DD-MM-YYYY' },
@@ -41,6 +22,7 @@ export const MY_FORMATS = {
 };
 
 @Component({
+  // tslint:disable-next-line: component-selector
   selector: 'logs-component',
   templateUrl: './ntmp-logs.component.html',
   styleUrls: ['./ntmp-logs.component.css'],
@@ -50,21 +32,24 @@ export const MY_FORMATS = {
     { provide: MAT_DATE_FORMATS, useValue: MY_FORMATS },
   ]
 })
-export class NtmpLogsComponent implements OnInit, AfterViewInit, AfterViewChecked {
+export class NtmpLogsComponent implements OnInit, OnChanges, AfterViewInit, AfterViewChecked {
   formSubscription;
-  dataSource = new MatTableDataSource();
   displayedColumns = ['description', 'request', 'response', 'date', 'status'];
-  resultsLength = 0;
   channelName: string;
   LogsFormFilter: FormGroup;
-  filter: Logsfilter;
   Description = new Array<string>();
   StatusCode = new Array<number>();
-  page: { num: number, length: number };
-  @ViewChild(MatPaginator) paginator: MatPaginator;
-  instanceTimeZone;
-  instanceDateTimeFormat;
   todayDate = moment(new Date());
+  filter: Logsfilter;
+  @ViewChild(MatPaginator) paginator: MatPaginator;
+
+  @Input() instanceTimeZone;
+  @Input() instanceDateTimeFormat;
+  @Input() dataSource = new MatTableDataSource();
+  @Input() isLoadingResults: boolean;
+  @Input() resultsLength;
+  @Input() page: { num: number, length: number };
+  @Output() searchFilter = new EventEmitter<any>();
 
   constructor(
     private dialog: MatDialog,
@@ -73,51 +58,49 @@ export class NtmpLogsComponent implements OnInit, AfterViewInit, AfterViewChecke
   // tslint:disable-next-line: typedef
   ngOnInit() {
     this.setForm();
+    this.StatusCode = Array.from(Array(35).keys());
+    this.StatusCode.push(100, 101, 200, 400, 500);
+    this.Description = [
+      'ExpensesEvent-NTMP', 'AvailabilityEvent-NTMP', 'AvailabilityEvent-Internal', 'ReservationEvent-NTMP', 'ReservationEvent-Internal'
+    ];
     this.page = {
       num: 0,
       length: 20
     };
-    this.StatusCode = Array.from(Array(35).keys());
-    this.StatusCode.push(100, 101, 200, 400, 500);
-    // this.StatusCode  = Array(35).fill().map((x,i)=>i);
-    this.Description = [
-      'ExpensesEvent-NTMP', 'AvailabilityEvent-NTMP', 'AvailabilityEvent-Internal', 'ReservationEvent-NTMP', 'ReservationEvent-Internal'
-    ];
-    // this.paginator.page.subscribe(page => {
-    //   if (this.filter) {
-    //     // output (searchParams)
-    //     //  this.load(page.pageIndex, this.filter);
-    //   } else {
-    //     // output(searchParams)
-    //     // this.load(page.pageIndex);
-    //   }
-    // });
-    // input instanceTimeZone
-    // this.instanceTimeZone = this.cookieService.get('instance_tz');
+  }
 
-    /**  instanceDateTimeFormat input 
-     * dateFormat input
-    */
-
-    // this.instanceDateTimeFormat = {
-    //   date: authState.dateFormat,
-    //   timeZone: authState.timeZone,
-    //   timeFormat: authState.timeFormat === 'am/pm' ? 'A' : null
-    // };
-    // MY_FORMATS.display.dateInput = authState.dateFormat;
-    // MY_FORMATS.parse.dateInput = authState.dateFormat;
-    // this.todayDate.format(authState.dateFormat);
+  // tslint:disable-next-line: typedef
+  ngOnChanges() {
+    if (this.instanceDateTimeFormat) {
+      MY_FORMATS.display.dateInput = this.instanceDateTimeFormat.date;
+      MY_FORMATS.parse.dateInput = this.instanceDateTimeFormat.date;
+      this.todayDate.format(this.instanceDateTimeFormat.date);
+    }
+    const list = document.getElementsByClassName('mat-paginator-range-label');
+    list[0].innerHTML = `${(this.page.num * 20) + 1} - ${(this.page.num * 20) + this.page.length}`;
   }
 
   // tslint:disable-next-line: typedef
   ngAfterViewInit() {
     this.dataSource.paginator = this.paginator;
+    this.paginator.page.subscribe(page => {
+      if (this.filter) {
+        // output (searchParams)
+        this.searchFilter.emit({
+          index: page.pageIndex,
+          filter: this.filter
+        });
+      } else {
+        // output(searchParams)
+        this.searchFilter.emit({
+          index: page.pageIndex,
+        });
+      }
+    });
   }
 
   // tslint:disable-next-line: typedef
   ngAfterViewChecked() {
-    const list = document.getElementsByClassName('mat-paginator-range-label');
-    list[0].innerHTML = `${(this.page.num * 20) + 1} - ${(this.page.num * 20) + this.page.length}`;
   }
 
   openDialog(data: any): void {
@@ -146,7 +129,9 @@ export class NtmpLogsComponent implements OnInit, AfterViewInit, AfterViewChecke
       description: null
     };
     // output (refreshed)
-    //  this.load();
+    this.searchFilter.emit({
+      filter: this.filter
+    });
   }
 
   // tslint:disable-next-line: typedef
@@ -180,7 +165,10 @@ export class NtmpLogsComponent implements OnInit, AfterViewInit, AfterViewChecke
         description: val.description || null
       };
       // output(searchFileds)
-      //  this.load(0, this.filter);
+      this.searchFilter.emit({
+        index: 0,
+        filter: this.filter
+      });
     } else {
       Object.keys(this.LogsFormFilter.errors).forEach(key => {
         if (key === 'fromToDate' && this.LogsFormFilter.errors[key]) {

@@ -5,7 +5,7 @@
 </mat-toolbar>
 <div class="mat-elevation-z2 wrapper">
 
-    <mat-spinner></mat-spinner>
+    <mat-spinner *ngIf="isLoadingResults"></mat-spinner>
     <ng-container>
         <form [formGroup]="LogsFormFilter" class="search-from">
             <div fxLayout="row wrap" fxLayout.xs="column" fxLayoutGap="10px" fxLayoutAlign="left center">
